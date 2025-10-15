@@ -1,20 +1,21 @@
-# Image Python légère
-FROM python:3.11-slim
+# Utiliser une image Python officielle
+FROM python:3.9-slim
 
-# Crée un dossier pour l'app
+# Définir le répertoire de travail
 WORKDIR /app
 
-# Copier les fichiers nécessaires
+# Copier les fichiers de dépendances
 COPY requirements.txt .
+
+# Installer les dépendances
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Copier le reste de l'application
 COPY . .
 
-# Expose le port 8000
+# Exposer le port utilisé par Uvicorn
 EXPOSE 8000
 
-# Charger les variables d'environnement
-ENV PYTHONUNBUFFERED=1
-
-# Commande de lancement
+# Commande pour démarrer l'application
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
