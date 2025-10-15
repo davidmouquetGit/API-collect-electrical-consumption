@@ -1,9 +1,8 @@
-from sqlalchemy import Column, Integer, Float, DateTime
+from sqlalchemy import Column, DateTime, Float
 from app.db import Base
 
 class Conso(Base):
-    __tablename__ = "courbecharge"
+    __tablename__ = "conso"
 
-    id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, index=True)
-    value = Column(Float)
+    timestamp = Column(DateTime, primary_key=True)
+    value = Column(Float, nullable=False)
