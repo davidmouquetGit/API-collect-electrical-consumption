@@ -6,3 +6,12 @@ class Conso(Base):
 
     timestamp = Column(DateTime, primary_key=True)
     value = Column(Float, nullable=False)
+
+
+class CourbeCharge(Base):
+    __tablename__ = "consohoraire"
+
+    timestamp = Column(DateTime, primary_key=True)
+    value = Column(Float, nullable=False)
+
+
