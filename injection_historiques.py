@@ -15,23 +15,34 @@ csv_file_path = "courbecharge.csv"
 # Nom de la table dans PostgreSQL
 table_name = "consohoraire"
 
-
-# Fonction pour importer les données depuis le CSV
 def import_csv_to_postgresql(conn, csv_file_path):
     with conn.cursor() as cursor:
         with open(csv_file_path, "r") as f:
             # Ignore la première ligne (en-tête)
             next(f)
-            # Utilise copy_expert pour un import efficace
+            # Utilise une table temporaire pour éviter les conflits
+            cursor.execute(
+                sql.SQL("""
+                    CREATE TEMP TABLE temp_import AS
+                    SELECT * FROM {} LIMIT 0
+                """).format(sql.Identifier(table_name))
+            )
+            # Import dans la table temporaire
             cursor.copy_expert(
-                sql.SQL(
-                    """
-                    COPY {} (timestamp, value)
+                sql.SQL("""
+                    COPY temp_import (timestamp, value)
                     FROM STDIN
                     WITH (FORMAT csv, DELIMITER ',')
-                    """
-                ).format(sql.Identifier(table_name)),
+                """),
                 f,
+            )
+            # Insère les données en ignorant les doublons
+            cursor.execute(
+                sql.SQL("""
+                    INSERT INTO {}
+                    SELECT * FROM temp_import
+                    ON CONFLICT (timestamp) DO NOTHING
+                """).format(sql.Identifier(table_name))
             )
         conn.commit()
 
@@ -39,15 +50,10 @@ def import_csv_to_postgresql(conn, csv_file_path):
 try:
     conn = psycopg2.connect(**db_config)
     print("Connexion à la base de données réussie.")
-
-
-    # Import des données depuis le CSV
     import_csv_to_postgresql(conn, csv_file_path)
     print("Données importées avec succès !")
-
 except Exception as e:
     print(f"Erreur : {e}")
-
 finally:
     if conn is not None:
         conn.close()

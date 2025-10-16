@@ -1,3 +1,4 @@
+
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
@@ -58,8 +59,6 @@ def get_data_horaire_from_api():
     import os
     import logging
 
-    logging.basicConfig(level=logging.INFO)
-    logger = logging.getLogger(__name__)
 
     # Récupérer les variables d'environnement avec des valeurs par défaut
     logger.info("début appel API")
