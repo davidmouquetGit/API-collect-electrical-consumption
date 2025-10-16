@@ -1,15 +1,13 @@
 from app.models import Conso
 from app.models import CourbeCharge
 from sqlalchemy.exc import IntegrityError
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def insert_data(db, records):
-    """Insère les données simulées dans la base (évite les doublons)."""
-    for record in records:
-        try:
-            db.add(Conso(timestamp=record["timestamp"], value=record["value"]))
-            db.commit()
-        except IntegrityError:
-            db.rollback()
+    pass
 
 
 
@@ -23,5 +21,10 @@ def insert_data_conso_horaire(db, records):
             ts = datetime.strptime(record['date'], '%Y-%m-%d %H:%M:%S')
             db.add(CourbeCharge(timestamp=ts, value=value_float))
             db.commit()
+	    logger.info("insertion data ok")
         except IntegrityError:
             db.rollback()
+            logger.info("inserion data echec")
+
+
+

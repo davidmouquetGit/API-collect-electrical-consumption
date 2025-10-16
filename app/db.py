@@ -1,3 +1,7 @@
+
+
+
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
@@ -9,7 +13,8 @@ DB_PASSWORD = os.environ.get("DB_PASSWORD", "")
 DB_HOST = os.environ.get("DB_HOST", "localhost")
 DB_PORT = os.environ.get("DB_PORT", "5432")
 DB_NAME = os.environ.get("DB_NAME", "conso")
-
+print(DB_PASSWORD)
+print(DB_HOST)
 # Construire l'URL de connexion à la base de données
 DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 

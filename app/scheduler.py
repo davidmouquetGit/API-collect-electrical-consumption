@@ -1,9 +1,15 @@
 from apscheduler.schedulers.background import BackgroundScheduler
+
+
 from datetime import datetime
 from app.simulateur import generate_fake_data
 from app.db import SessionLocal
 from app.crud import insert_data, insert_data_conso_horaire
 import requests
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def collect_fake_data():
     db = SessionLocal()
@@ -17,6 +23,7 @@ def collect_fake_data():
         db.close()
 
 def start_scheduler():
+    logger.info("Début scheduler")
     scheduler = BackgroundScheduler()
     scheduler.add_job(collect_consohoraire_data, "interval", days=1)
     scheduler.start()
@@ -24,6 +31,7 @@ def start_scheduler():
 
 
 def collect_consohoraire_data():
+    logger.info("Début collect data conso horaire")
     db = SessionLocal()
     try:
         data = get_data_horaire_from_api()
@@ -33,6 +41,7 @@ def collect_consohoraire_data():
     except Exception as e:
         print("Erreur :", e)
     finally:
+        logger.info("collect data conso horaire bien déroulée")
         db.close()
 
 def get_data_horaire_from_api():
@@ -47,9 +56,13 @@ def get_data_horaire_from_api():
     """
     from datetime import datetime, timedelta
     import os
+    import logging
+
+    logging.basicConfig(level=logging.INFO)
+    logger = logging.getLogger(__name__)
 
     # Récupérer les variables d'environnement avec des valeurs par défaut
-
+    logger.info("début appel API")
     API_TOKEN = os.environ.get("API_TOKEN", "")
     PRM       = os.environ.get("PRM", "")
 
@@ -76,5 +89,5 @@ def get_data_horaire_from_api():
     # Vérifier le code HTTP
     if response.status_code != 200:
         raise Exception(f"Erreur HTTP {response.status_code} : {response.text}")
-    
+    logger.info("fin appel API")
     return response.json()
