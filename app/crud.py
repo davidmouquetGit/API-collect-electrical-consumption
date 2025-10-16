@@ -21,7 +21,6 @@ def insert_data_conso_horaire(db, records):
             ts = datetime.strptime(record['date'], '%Y-%m-%d %H:%M:%S')
             db.add(CourbeCharge(timestamp=ts, value=value_float))
             db.commit()
-	    logger.info("insertion data ok")
         except IntegrityError:
             db.rollback()
             logger.info("inserion data echec")
