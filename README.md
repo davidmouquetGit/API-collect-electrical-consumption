@@ -55,7 +55,7 @@ API pour collecter les données de consommations électrique d'ENEDIS et GRDF
 * nano ~/.bashrc
 
 ### Rajouter les variables d'environnement (à modifier sur EC2)
-* export DB_ENDPOINT="localhost"
+* export DB_HOST="localhost"
 * export DB_PORT="5432"
 * export DB_NAME="conso"
 * export DB_USER="postgres"

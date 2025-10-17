@@ -2,31 +2,19 @@
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-from datetime import datetime
-from app.simulateur import generate_fake_data
 from app.db import SessionLocal
-from app.crud import insert_data, insert_data_conso_horaire
+from app.crud import insert_data_conso_horaire, insert_data_conso_jour
 import requests
 import logging
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-def collect_fake_data():
-    db = SessionLocal()
-    try:
-        data = generate_fake_data()
-        insert_data(db, data)
-        print(f"[{datetime.now()}] → {data[0]}")
-    except Exception as e:
-        print("Erreur :", e)
-    finally:
-        db.close()
 
 def start_scheduler():
     logger.info("Début scheduler")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(collect_consohoraire_data, "interval", days=1)
+    scheduler.add_job(collect_consohoraire_data, "interval", minutes=1)
     scheduler.start()
     print("Scheduler lancé (toutes les 24 h)")
 
@@ -38,6 +26,7 @@ def collect_consohoraire_data():
         data = get_data_horaire_from_api()
         data = data["interval_reading"]
         insert_data_conso_horaire(db, data)
+        insert_data_conso_jour(db, data)
         
     except Exception as e:
         print("Erreur :", e)
@@ -62,8 +51,8 @@ def get_data_horaire_from_api():
 
     # Récupérer les variables d'environnement avec des valeurs par défaut
     logger.info("début appel API")
-    API_TOKEN = os.environ.get("API_TOKEN", "")
-    PRM       = os.environ.get("PRM", "")
+    API_TOKEN = os.environ.get("API_TOKEN_ELEC", "")
+    PRM       = os.environ.get("PRM_ELEC", "")
 
 
     today_tstamp = datetime.now()

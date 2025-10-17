@@ -1,17 +1,33 @@
-from sqlalchemy import Column, DateTime, Float
 from app.db import Base
+from sqlalchemy import Column, Integer, Float, TIMESTAMP, UniqueConstraint
 
-class Conso(Base):
-    __tablename__ = "conso"
 
-    timestamp = Column(DateTime, primary_key=True)
+class ConsoHeureElec(Base):
+    __tablename__ = "conso_heure_elec"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    horodatage = Column(TIMESTAMP, nullable=False)
     value = Column(Float, nullable=False)
 
+    __table_args__ = (
+        UniqueConstraint("horodatage", name="uq_conso_heure_elec_horodatage"),
+    )
 
-class CourbeCharge(Base):
-    __tablename__ = "consohoraire"
+    def __repr__(self):
+        return f"<ConsoHeureElec(id={self.id}, horodatage={self.horodatage}, value={self.value})>"
+    
 
-    timestamp = Column(DateTime, primary_key=True)
+class ConsoJourElec(Base):
+    __tablename__ = "conso_jour_elec"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    horodatage = Column(TIMESTAMP, nullable=False)
     value = Column(Float, nullable=False)
 
+    __table_args__ = (
+        UniqueConstraint("horodatage", name="uq_conso_jourelec_horodatage"),
+    )
 
+    def __repr__(self):
+        return f"<ConsoJourElec(id={self.id}, horodatage={self.horodatage}, value={self.value})>"
+    
