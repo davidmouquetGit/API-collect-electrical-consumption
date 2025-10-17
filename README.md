@@ -6,11 +6,13 @@ API pour collecter les données de consommations électrique d'ENEDIS et GRDF
 
 * démarrer postgres sur ubunu: sudo -i -u postgres
 * lancer psql: psql
-* créer une bdd: CREATE DATABASE conso OWNER postgres;RANT ALL PRIVILEGES ON DATABASE conso TO postgres;
+* créer une bdd: 
+  - CREATE DATABASE conso OWNER postgres;
+  - GRANT ALL PRIVILEGES ON DATABASE conso TO postgres;
 * se connecter à une bdd depuis psql: \c conso
-*se connecter à une bdd depuis terminal:
-        sudo -i -u postgres
-        psql -d conso
+* se connecter à une bdd depuis terminal:
+  - sudo -i -u postgres
+  - psql -d conso
 * Créer les tables depuis le client psql:
 
         CREATE TABLE conso_jour_elec (
