@@ -4,8 +4,22 @@ import logging
 from sqlalchemy.dialects.postgresql import insert
 from datetime import datetime
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+# Créer un gestionnaire de fichier (FileHandler) qui écrit dans un fichier
+file_handler = logging.FileHandler('/var/log/myapp/app.log')
+file_handler.setLevel(logging.INFO)
+
+# Créer un format pour les logs
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(formatter)
+
+# Ajouter le gestionnaire de fichier au logger
+logger.addHandler(file_handler)
+
+
+
+
 
 def insert_data_conso_horaire(db, records):
     """
