@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 def start_scheduler():
     logger.info("Début scheduler")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(collect_consohoraire_data, "interval", minutes=1)
+    scheduler.add_job(collect_consohoraire_data, "interval", hours=24)
     scheduler.start()
     print("Scheduler lancé (toutes les 24 h)")
 
