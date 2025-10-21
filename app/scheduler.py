@@ -102,7 +102,7 @@ def get_data_jour_gaz_from_s3():
     df_newdata_gaz = pd.concat(list_df)
     df_newdata_gaz = df_newdata_gaz[['Date de relevé', 'Volume consommé (m3)', 'Energie consommée (kWh)', 'Coefficient de conversion', 'Température locale (°C)']]
     df_newdata_gaz.columns = ['horodatage', 'volume', 'energie','pci','text']
-    df['horodatage']=pd.to_datetime(df['horodatage'], format='%d/%m/%Y')
+    df_newdata_gaz['horodatage']=pd.to_datetime(df_newdata_gaz['horodatage'], format='%d/%m/%Y')
 
     return df_newdata_gaz
 
