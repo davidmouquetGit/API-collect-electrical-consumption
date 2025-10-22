@@ -13,10 +13,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copier le code de l’application
 COPY app ./app
 
-RUN mkdir -p /var/log/myapp
-
-RUN chmod -R 777 /var/log/myapp
-
 # Exposer le port
 EXPOSE 8000
 

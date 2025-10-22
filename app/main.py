@@ -1,8 +1,27 @@
+
+
+
+
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
 from contextlib import asynccontextmanager
 from app.db import Base, engine, SessionLocal
 from app.scheduler import start_scheduler
+import logging
+import sys
+
+# Configuration du logger
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    handlers=[
+        logging.StreamHandler(sys.stdout)  # important pour Docker
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
+
 
 # Crée les tables
 Base.metadata.create_all(bind=engine)
