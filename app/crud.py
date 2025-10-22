@@ -1,4 +1,4 @@
-from app.models import ConsoHeureElec, ConsoJourElec, ConsoJourGaz
+from app.models import ConsoHeureElec, ConsoJourElec, ConsoJourGaz, MeteoJour
 from sqlalchemy.exc import IntegrityError
 import logging
 from sqlalchemy.dialects.postgresql import insert
@@ -7,7 +7,7 @@ from datetime import datetime
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 # Créer un gestionnaire de fichier (FileHandler) qui écrit dans un fichier
-file_handler = logging.FileHandler('/var/log/myapp/app.log')
+file_handler = logging.FileHandler('app.log')
 file_handler.setLevel(logging.INFO)
 
 # Créer un format pour les logs
@@ -141,4 +141,28 @@ def insert_data_conso_gaz_jour(db, df):
         db.rollback()
         logger.error(f"Erreur d'insertion données gaz jours: {e}")
         return f"Erreur d'insertion données gaz jours: {e}"
+    return "OK"
+
+
+def insert_data_meteo_jour(db, df):
+
+
+    try:
+        # --- Préparation de la requête d'insertion ---
+        stmt = insert(MeteoJour).values(df[["horodatage", "temperature_2m_min", "temperature_2m_max"]].to_dict(orient="records"))
+
+        # --- 8Gestion des doublons (ignore si horodatage existe déjà) ---
+        stmt = stmt.on_conflict_do_nothing(index_elements=["horodatage"])
+
+        db.execute(stmt)
+        db.commit()
+
+    except IntegrityError as e:
+        db.rollback()
+        logger.error(f"Erreur d'intégrité données météo jours: {e}")
+        return f"Erreur d'intégrité données météo jours: {e}"
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Erreur d'insertion données météo jours: {e}")
+        return f"Erreur d'insertion données météo jours: {e}"
     return "OK"

@@ -2,9 +2,10 @@ import sys, os
 
 from dotenv import load_dotenv
 import pytest
-from app.crud import insert_data_conso_jour,insert_data_conso_horaire
+from app.crud import insert_data_conso_jour, insert_data_conso_horaire, insert_data_meteo_jour
 from app.scheduler import get_data_horaire_from_api
 from app.db import SessionLocal
+from app.collecte_meteo_data import get_meteo_data
 
 
 class TestDataInsertion:
@@ -62,18 +63,11 @@ class TestDataInsertion:
         result = insert_data_conso_jour(db, data_elec_horaire)
         assert result=="OK", "L'insertion des données journalières a échoué"
         db.close()
-    
-    def test_get_data_jour_gaz_from_s3(self):
-        from app.scheduler import get_data_jour_gaz_from_s3
-        df_conso_gaz = get_data_jour_gaz_from_s3()
-        assert df_conso_gaz is not None, "Aucune donnée gaz récupérée depuis S3"
-        assert not df_conso_gaz.empty, "DataFrame des données gaz est vide"
 
-    def test_insert_data_conso_gaz_jour(self):
-        from app.scheduler import get_data_jour_gaz_from_s3
-        from app.crud import insert_data_conso_gaz_jour
+    def test_get_meteo_data(self):
         db = SessionLocal()
-        df_conso_gaz = get_data_jour_gaz_from_s3()
-        result = insert_data_conso_gaz_jour(db, df_conso_gaz)
-        assert result == "OK", "L'insertion des données gaz journalières a échoué"
+        data = get_meteo_data()
+        assert data is not None, "Pas de données météo retournées"
+        result = insert_data_meteo_jour(db, data)
+        assert result=="OK", result
         db.close()

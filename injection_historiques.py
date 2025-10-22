@@ -1,60 +1,69 @@
-import psycopg2
-from psycopg2 import sql
+from app.db import Base, engine, SessionLocal
+from sqlalchemy import Column, Integer, Float, TIMESTAMP, UniqueConstraint
+from sqlalchemy.dialects.postgresql import insert
 
-# Configuration de la connexion à la base de données RDS
-db_config = {
-    "host": "conso.cr2m0qmgsjvc.eu-north-1.rds.amazonaws.com",
-    "database": "conso",
-    "user": "postgres",
-    "password": "Labrax_007",
-}
 
-# Chemin vers ton fichier CSV sur EC2
-csv_file_path = "courbecharge.csv"
+class MeteoJour(Base):
+    __tablename__ = "meteo_jour"
 
-# Nom de la table dans PostgreSQL
-table_name = "consohoraire"
+    horodatage = Column(TIMESTAMP, primary_key=True, nullable=False)
+    temperature_2m_min = Column(Float, nullable=False)
+    temperature_2m_max = Column(Float, nullable=False)
+    __table_args__ = (
+        UniqueConstraint("horodatage", name="uq_meteo_day_horodatage"),
+    )
 
-def import_csv_to_postgresql(conn, csv_file_path):
-    with conn.cursor() as cursor:
-        with open(csv_file_path, "r") as f:
-            # Ignore la première ligne (en-tête)
-            next(f)
-            # Utilise une table temporaire pour éviter les conflits
-            cursor.execute(
-                sql.SQL("""
-                    CREATE TEMP TABLE temp_import AS
-                    SELECT * FROM {} LIMIT 0
-                """).format(sql.Identifier(table_name))
-            )
-            # Import dans la table temporaire
-            cursor.copy_expert(
-                sql.SQL("""
-                    COPY temp_import (timestamp, value)
-                    FROM STDIN
-                    WITH (FORMAT csv, DELIMITER ',')
-                """),
-                f,
-            )
-            # Insère les données en ignorant les doublons
-            cursor.execute(
-                sql.SQL("""
-                    INSERT INTO {}
-                    SELECT * FROM temp_import
-                    ON CONFLICT (timestamp) DO NOTHING
-                """).format(sql.Identifier(table_name))
-            )
-        conn.commit()
 
-# Connexion à la base de données et exécution
-try:
-    conn = psycopg2.connect(**db_config)
-    print("Connexion à la base de données réussie.")
-    import_csv_to_postgresql(conn, csv_file_path)
-    print("Données importées avec succès !")
-except Exception as e:
-    print(f"Erreur : {e}")
-finally:
-    if conn is not None:
-        conn.close()
-        print("Connexion fermée.")
+
+# Crée les tables
+Base.metadata.create_all(bind=engine)
+
+
+def insert_meteo_from_csv(csv_path: str):
+    """Insère les données météo d’un CSV dans la table meteo_jour."""
+    import pandas as pd
+
+    # --- 2️Lecture du CSV avec pandas ---
+    df = pd.read_csv(csv_path, sep=",")
+    print(f"Lecture de {len(df)} lignes depuis {csv_path}")
+
+    # --- Vérification des colonnes attendues ---
+    required_cols = {"date", "temperature_2m_min", "temperature_2m_max"}
+    missing = required_cols - set(df.columns)
+    if missing:
+        raise ValueError(f"Colonnes manquantes dans le CSV : {', '.join(missing)}")
+
+    # --- Renommage pour correspondre au modèle SQLAlchemy ---
+    df = df.rename(columns={"date": "horodatage"})
+
+    # --- Conversion de la colonne date ---
+    df["horodatage"] = pd.to_datetime(df["horodatage"])
+
+    # --- Création de la session SQLAlchemy ---
+    session = SessionLocal()
+
+    try:
+        # --- Préparation de la requête d'insertion ---
+        stmt = insert(MeteoJour).values(df[["horodatage", "temperature_2m_min", "temperature_2m_max"]].to_dict(orient="records"))
+
+        # --- 8Gestion des doublons (ignore si horodatage existe déjà) ---
+        stmt = stmt.on_conflict_do_nothing(index_elements=["horodatage"])
+
+        # --- Exécution et validation ---
+        result = session.execute(stmt)
+        session.commit()
+
+        print(f"{result.rowcount} lignes insérées (les doublons ont été ignorés).")
+
+    except Exception as e:
+        session.rollback()
+        print(f"Erreur lors de l'insertion : {e}")
+        raise
+
+    finally:
+        session.close()
+
+if __name__ == "__main__":
+    # Exemple d'utilisation
+    insert_meteo_from_csv("data/daily_temperature_data.csv")
+    

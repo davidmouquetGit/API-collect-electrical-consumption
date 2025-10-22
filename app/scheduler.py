@@ -3,14 +3,15 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 from app.db import SessionLocal
-from app.crud import insert_data_conso_horaire, insert_data_conso_jour, insert_data_conso_gaz_jour
+from app.crud import insert_data_conso_horaire, insert_data_conso_jour, insert_data_meteo_jour
 import requests
 import logging
+from app.collecte_meteo_data import get_meteo_data
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 # Créer un gestionnaire de fichier (FileHandler) qui écrit dans un fichier
-file_handler = logging.FileHandler('/var/log/myapp/app.log')
+file_handler = logging.FileHandler('app.log')
 file_handler.setLevel(logging.INFO)
 
 # Créer un format pour les logs
@@ -38,8 +39,12 @@ def collect_data():
         data = data["interval_reading"]
         insert_data_conso_horaire(db, data)
         insert_data_conso_jour(db, data)
-        df_conso_gaz = get_data_jour_gaz_from_s3()
-        insert_data_conso_gaz_jour(db, df_conso_gaz)
+
+        #df_conso_gaz = get_data_jour_gaz_from_s3()  --> les données de conso gaz sont désormais injectée directement dasn streamlit
+        #insert_data_conso_gaz_jour(db, df_conso_gaz)
+        df_meteo = get_meteo_data()
+        if df_meteo is not None:
+            insert_data_meteo_jour(db, df_meteo)
         
     except Exception as e:
         print("Erreur :", e)

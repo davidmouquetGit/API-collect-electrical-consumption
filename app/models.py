@@ -49,3 +49,14 @@ class ConsoJourGaz(Base):
     def __repr__(self):
         return f"<ConsoJourGaz(id={self.id}, horodatage={self.horodatage}, value={self.volume})>"
     
+
+class MeteoJour(Base):
+    __tablename__ = "meteo_jour"
+
+    horodatage = Column(TIMESTAMP, primary_key=True, nullable=False)
+    temperature_2m_min = Column(Float, nullable=False)
+    temperature_2m_max = Column(Float, nullable=False)
+    __table_args__ = (
+        UniqueConstraint("horodatage", name="uq_meteo_day_horodatage"),
+    )
+

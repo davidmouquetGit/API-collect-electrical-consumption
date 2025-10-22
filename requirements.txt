@@ -11,3 +11,7 @@ pandas
 awswrangler
 openpyxl
 pytest
+openmeteo-requests
+numpy
+requests-cache 
+retry-requests
