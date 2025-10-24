@@ -97,11 +97,6 @@ def get_data_horaire_from_api():
     response = requests.get(base_url, headers=headers, params=params)
     # Vérifier le code HTTP
     if response.status_code != 200:
-        print(PRM)
-        print(f"API_TOKEN: {API_TOKEN}")
-        print(day_start_import_str)
-        print(today_str)
-
         raise Exception(f"Erreur HTTP {response.status_code} : {response.text}")
     logger.info("fin appel API")
     return response.json()

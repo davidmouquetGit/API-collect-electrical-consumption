@@ -34,7 +34,6 @@ def insert_data_conso_horaire(db, records):
             value_float = float(record["value"])
             ts = datetime.strptime(record["date"], "%Y-%m-%d %H:%M:%S")
             data_to_insert.append({"horodatage": ts, "value": value_float})
-            print(data_to_insert[0])
         except Exception as e:
             logger.warning(f"Erreur de format sur l'enregistrement {record} : {e}")
             return False

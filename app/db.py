@@ -17,8 +17,6 @@ DB_NAME = os.getenv("DB_NAME", "conso")
 # Construire l'URL de connexion à la base de données
 DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
-print(f"DB_URL: {DB_URL}")  # Ajout d'un print pour débogage
-
 # Créer l'engin SQLAlchemy
 engine = create_engine(DB_URL)
 
