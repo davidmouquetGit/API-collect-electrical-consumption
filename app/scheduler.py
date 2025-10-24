@@ -26,9 +26,9 @@ logger.addHandler(file_handler)
 def start_scheduler():
     logger.info("Début scheduler")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(collect_data, "interval", hours=24)
+    scheduler.add_job(collect_data, "interval", minutes=1)
     scheduler.start()
-    print("Scheduler lancé (toutes les 24 h)")
+    print("Scheduler lancé (toutes les 1 minutes)")
 
 
 def collect_data():
@@ -97,9 +97,9 @@ def get_data_horaire_from_api():
     response = requests.get(base_url, headers=headers, params=params)
     # Vérifier le code HTTP
     if response.status_code != 200:
-	print(PRM)
-	print(day_start_import_str)
-	print(today_str)
+        print(PRM)
+        print(day_start_import_str)
+        print(today_str)
 
         raise Exception(f"Erreur HTTP {response.status_code} : {response.text}")
     logger.info("fin appel API")
