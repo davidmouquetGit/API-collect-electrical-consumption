@@ -98,6 +98,7 @@ def get_data_horaire_from_api():
     # Vérifier le code HTTP
     if response.status_code != 200:
         print(PRM)
+        print(f"API_TOKEN: {API_TOKEN}")
         print(day_start_import_str)
         print(today_str)
 
