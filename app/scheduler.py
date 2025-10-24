@@ -3,7 +3,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 
 from app.db import SessionLocal
-from app.crud import insert_data_conso_horaire, insert_data_conso_jour, insert_data_meteo_jour
+from app.crud import insert_data_conso_horaire, insert_data_conso_jour, insert_data_meteo_jour, insert_data_occup_jour
 import requests
 import logging
 from app.collecte_meteo_data import get_meteo_data
@@ -39,7 +39,7 @@ def collect_data():
         data = data["interval_reading"]
         insert_data_conso_horaire(db, data)
         insert_data_conso_jour(db, data)
-
+        insert_data_occup_jour(db)
         #df_conso_gaz = get_data_jour_gaz_from_s3()  --> les données de conso gaz sont désormais injectée directement dasn streamlit
         #insert_data_conso_gaz_jour(db, df_conso_gaz)
         df_meteo = get_meteo_data()

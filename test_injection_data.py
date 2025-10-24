@@ -2,7 +2,7 @@ import sys, os
 
 from dotenv import load_dotenv
 import pytest
-from app.crud import insert_data_conso_jour, insert_data_conso_horaire, insert_data_meteo_jour
+from app.crud import insert_data_conso_jour, insert_data_conso_horaire, insert_data_meteo_jour, insert_data_occup_jour
 from app.scheduler import get_data_horaire_from_api
 from app.db import SessionLocal
 from app.collecte_meteo_data import get_meteo_data
@@ -63,6 +63,13 @@ class TestDataInsertion:
         result = insert_data_conso_jour(db, data_elec_horaire)
         assert result=="OK", "L'insertion des données journalières a échoué"
         db.close()
+
+    def test_insert_data_occup_jour(self):
+        db = SessionLocal()
+        result = insert_data_occup_jour(db)
+        assert result=="OK", "L'insertion des données occupation a échoué"
+        db.close()
+
 
     def test_get_meteo_data(self):
         db = SessionLocal()

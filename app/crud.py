@@ -1,4 +1,4 @@
-from app.models import ConsoHeureElec, ConsoJourElec, ConsoJourGaz, MeteoJour
+from app.models import ConsoHeureElec, ConsoJourElec, ConsoJourGaz, MeteoJour, Occupation
 from sqlalchemy.exc import IntegrityError
 import logging
 from sqlalchemy.dialects.postgresql import insert
@@ -166,3 +166,35 @@ def insert_data_meteo_jour(db, df):
         logger.error(f"Erreur d'insertion données météo jours: {e}")
         return f"Erreur d'insertion données météo jours: {e}"
     return "OK"
+
+
+
+def insert_data_occup_jour(db):
+
+    from app.getdata import get_data
+
+    conso = get_data(source = "elec_jour")
+    occupation = conso.copy()
+    occupation['presence'] = occupation['value'].apply(lambda v: 'oui' if v>=10 else 'non')
+        
+
+    try:
+        # --- Préparation de la requête d'insertion ---
+        stmt = insert(Occupation).values(occupation[["horodatage", "presence"]].to_dict(orient="records"))
+
+        # --- 8Gestion des doublons (ignore si horodatage existe déjà) ---
+        stmt = stmt.on_conflict_do_nothing(index_elements=["horodatage"])
+
+        db.execute(stmt)
+        db.commit()
+
+    except IntegrityError as e:
+        db.rollback()
+        logger.error(f"Erreur d'intégrité données occupation: {e}")
+        return f"Erreur d'intégrité données occupation: {e}"
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Erreur d'insertion données occupation: {e}")
+        return f"Erreur d'insertion données occupation: {e}"
+    return "OK"
+

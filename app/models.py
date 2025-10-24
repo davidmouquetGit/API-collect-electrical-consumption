@@ -1,5 +1,5 @@
 from app.db import Base
-from sqlalchemy import Column, Integer, Float, TIMESTAMP, UniqueConstraint
+from sqlalchemy import Column, Integer, Float, String, TIMESTAMP, UniqueConstraint
 
 
 class ConsoHeureElec(Base):
@@ -58,5 +58,16 @@ class MeteoJour(Base):
     temperature_2m_max = Column(Float, nullable=False)
     __table_args__ = (
         UniqueConstraint("horodatage", name="uq_meteo_day_horodatage"),
+    )
+
+
+
+class Occupation(Base):
+    __tablename__ = "occupation_jour"
+
+    horodatage = Column(TIMESTAMP, primary_key=True, nullable=False)
+    presence = Column(String, nullable=False)
+    __table_args__ = (
+        UniqueConstraint("horodatage", name="uq_occ_day_horodatage"),
     )
 
