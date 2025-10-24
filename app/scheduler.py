@@ -26,7 +26,7 @@ logger.addHandler(file_handler)
 def start_scheduler():
     logger.info("Début scheduler")
     scheduler = BackgroundScheduler()
-    scheduler.add_job(collect_data, "interval", minutes=1)
+    scheduler.add_job(collect_data, "interval", hours=8)
     scheduler.start()
     print("Scheduler lancé (toutes les 1 minutes)")
 
