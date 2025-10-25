@@ -32,3 +32,6 @@ print("conso elec jour\n",df.head())
 
 df = pd.read_sql("SELECT horodatage, energie FROM conso_jour_gaz order by horodatage desc", engine)
 print("conso gaz jour\n",df.head())
+
+df = pd.read_sql("SELECT * FROM meteo_jour order by horodatage desc", engine)
+print("meteo jour\n",df.head())
