@@ -7,7 +7,7 @@ __pycache__/
 *.so
 
 sync_rds_local.ps1
-
+bas.ipynb
 # Distribution / packaging
 .Python
 build/

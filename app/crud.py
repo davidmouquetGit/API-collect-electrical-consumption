@@ -28,6 +28,11 @@ def insert_data_conso_horaire(db, records):
     """
     data_to_insert = []
 
+    import pandas as pd
+    df = pd.DataFrame(records)
+    df = df.drop_duplicates(subset=["date"], keep="last")
+    records = df.to_dict(orient="records")
+
     # Prépare les données
     for record in records:
         try:
