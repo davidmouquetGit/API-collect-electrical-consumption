@@ -1,26 +1,30 @@
 from app.db import Base, engine, SessionLocal
-from sqlalchemy import Column, Integer, Float, TIMESTAMP, UniqueConstraint
+from sqlalchemy import Column, Integer, Float,String, TIMESTAMP, UniqueConstraint
 from sqlalchemy.dialects.postgresql import insert
-
-
-class MeteoJour(Base):
-    __tablename__ = "meteo_jour"
-
-    horodatage = Column(TIMESTAMP, primary_key=True, nullable=False)
-    temperature_2m_min = Column(Float, nullable=False)
-    temperature_2m_max = Column(Float, nullable=False)
-    __table_args__ = (
-        UniqueConstraint("horodatage", name="uq_meteo_day_horodatage"),
-    )
-
+from app.models import Occupation
 
 
 # Crée les tables
 Base.metadata.create_all(bind=engine)
 
+def insert_data_occupation():
+    from app.crud import insert_data_occup_jour
+    from app.db import SessionLocal
+    from app.db import Base, engine 
+
+    db = SessionLocal()
+
+
+    Base.metadata.create_all(bind=engine)
+
+    insert_data_occup_jour(db)
+
+    db.close()
+
+"""
+
 
 def insert_meteo_from_csv(csv_path: str):
-    """Insère les données météo d’un CSV dans la table meteo_jour."""
     import pandas as pd
 
     # --- 2️Lecture du CSV avec pandas ---
@@ -62,8 +66,8 @@ def insert_meteo_from_csv(csv_path: str):
 
     finally:
         session.close()
-
+"""
 if __name__ == "__main__":
     # Exemple d'utilisation
-    insert_meteo_from_csv("data/daily_temperature_data.csv")
+    insert_data_occupation()
     
