@@ -6,6 +6,8 @@ __pycache__/
 # C extensions
 *.so
 
+sync_rds_local.ps1
+
 # Distribution / packaging
 .Python
 build/
