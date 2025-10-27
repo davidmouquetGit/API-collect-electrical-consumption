@@ -59,4 +59,5 @@ L'architecture de l'API est représentée ci-dessous. GRDF ne fournit apparemmen
 | LATITUDE | Latitude de la station (nombre décimal)|
 | LONGITUDE | Longitude de la station (nombre décimal)|
 
-- 
+- Construire l'image docker et lancer le conteneur
+  -  docker compose up -d --build
