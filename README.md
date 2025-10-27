@@ -7,7 +7,7 @@ Cette API a pour objectif de collecter toutes les 24 heures les données d'un lo
 - de consommation journalière de gaz naturel
 - de température extérieur
 
-puis de les stocker dans une base de données. Cette base de données dessert ensuite une appplication de suivi des consommations.
+puis de les stocker dans une base de données. Cette base de données dessert ensuite une application de suivi des consommations.
 
 L'architecture de l'API est représentée ci-dessous. GRDF ne fournit apparemment pas d'API pour les clients particuliers. les données de consommations de gaz sont téléchargées manuellement et poussées vers un bucket.
 
