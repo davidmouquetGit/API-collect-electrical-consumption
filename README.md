@@ -1,47 +1,33 @@
-# API pour collecter les données de consommations électrique d'ENEDIS et les données météo
+# API collecte données de consommations électricité/gaz/météo
 
-# 🔥 Prédiction de la Consommation Électrique
+Cette API à pour objectif de collecter toutes les 24 heures les données d'un logement particulier:
+- de consommation horaire d'électricité
+- de consommation journalière de gaz naturel
+- de température extérieur
 
-> Prédire la consommation électrique horaire à partir de données météo et de données d’occupation des bâtiments.
+puis de les stocker dans une base de données. Cette base de données dessert ensuite une appplication de suivis des consommations.
 
----
+L'architecture de l'API est représentées ci-dessous. GRDF ne fournit apparemment pas d'API pour les clients particulier. les données de consommations de gaz sont téléchargées manuellement et poussées vers un bucket.
 
-## 🎯 Objectif du projet
+![Architecture](images/architectureapi.png)
 
-Ce projet vise à construire un modèle de machine learning capable d’estimer la consommation électrique d’un site à partir de paramètres externes (température, humidité, occupation, etc.).  
-L’objectif est de mieux anticiper les pics de consommation et optimiser les coûts énergétiques.
+## 📊 Sources utilisées
 
----
+- API météo [OpenMeteo](https://pypi.org/project/openmeteo-requests/)
+- API [Linky](https://conso.boris.sh/)   
+- Données client GRDF  
 
-## 📊 Données utilisées
 
-- **Source :** Données internes + API météo (OpenWeatherMap)  
-- **Format :** CSV / JSON  
-- **Volume :** ~500 000 enregistrements horaires  
-- **Variables clés :** température, taux d’occupation, jour de la semaine, heure, consommation  
+## ⚙️ Technologie utilisées
 
----
-
-## ⚙️ Méthodologie
-
-1. Nettoyage et agrégation des données (pandas, SQLAlchemy)  
-2. Feature engineering et scaling  
-3. Entraînement de modèles (RandomForest, XGBoost, LSTM)  
-4. Évaluation via RMSE / MAPE  
-5. Visualisation interactive avec **Streamlit**
-
----
-
-## 🚀 Résultats
-
-- Meilleur modèle : **XGBoost**  
-- **RMSE : 0.37**  
-- **Gain de 12%** par rapport au modèle de base  
-- Application Streamlit déployée sur EC2  
-
-![Dashboard](images/dashboard.png)
-
----
+- RDS AWS pour le stockage des données dans une base PostgreSQL
+- S3 AWS pour le stockage des données GRDF
+- EC2 AWS pour l'hergergement de l'API sur un serveur virtuel
+- Python pour le code avec:
+  - FastAPI pour le framework de l'API
+  - apscheduler pour les appels quotidients des API météo et Linky
+  - sqlalchemy pour l'insertion etla gestion des données vers PostgreSQL
+- Docker pour le déploiement de l'API sur EC2
 
 ## 🗂️ Structure du dépôt
 
