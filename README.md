@@ -26,7 +26,7 @@ L'architecture de l'API est représentées ci-dessous. GRDF ne fournit apparemme
 - Python pour le code avec:
   - FastAPI pour le framework de l'API
   - apscheduler pour les appels quotidients des API météo et Linky
-  - sqlalchemy pour l'insertion etla gestion des données vers PostgreSQL
+  - sqlalchemy pour l'insertion et la gestion des données vers PostgreSQL
 - Docker pour le déploiement de l'API sur EC2
 
 ## 🗂️ Structure du dépôt
