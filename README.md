@@ -1,5 +1,4 @@
-# API-collect-electrical-consumption
-API pour collecter les données de consommations électrique d'ENEDIS et GRDF
+# API pour collecter les données de consommations électrique d'ENEDIS et les données météo
 
 # 🔥 Prédiction de la Consommation Électrique
 
